@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shalini Singh | Portfolio</title>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;700&family=Inter:wght@300;400;600&family=Dancing+Script:wght@700&display=swap');
+
+        /* --- GLOBAL SETUP --- */
+        html { scroll-behavior: smooth; }
+        body {
+            margin: 0;
+            background-color: #050505;
+            color: white;
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* --- 3D BACKGROUND (FIXED) --- */
+        #canvas-container {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+        }
+
+        /* --- NAVIGATION --- */
+        header {
+            position: fixed;
+            top: 0; left: 0; width: 100%;
+            padding: 20px 5%;
+            box-sizing: border-box;
+            display: flex; justify-content: space-between; align-items: center;
+            z-index: 100;
+            background: rgba(5, 5, 5, 0.7);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        /* LOGO UPDATED: Solid Color (No Gradient/Blur) */
+        .logo-text {
+            font-family: 'Dancing Script', cursive;
+            font-size: 1.8rem;
+            color: white; /* Solid white for clarity */
+            text-decoration: none;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .logo-text:hover {
+            color: #00d2ff; /* Glows blue on hover */
+        }
+
+        .nav-links { display: flex; gap: 30px; }
+        .nav-links a {
+            color: #aaa; text-decoration: none; font-size: 0.9rem; transition: color 0.3s;
+        }
+        .nav-links a:hover { color: white; text-shadow: 0 0 10px rgba(255,255,255,0.5); }
+        .talk-btn {
+            border: 1px solid rgba(255,255,255,0.2);
+            padding: 8px 20px; border-radius: 30px;
+            text-decoration: none; color: white; font-size: 0.9rem; transition: all 0.3s;
+        }
+        .talk-btn:hover { background: white; color: black; }
+
+        /* --- SECTIONS --- */
+        section {
+            min-height: 100vh;
+            width: 100%;
+            display: flex; justify-content: center; align-items: center;
+            position: relative;
+            padding: 100px 5% 50px 5%;
+            box-sizing: border-box;
+            z-index: 10;
+        }
+
+        /* --- COMPONENT STYLES --- */
+        .hero-content-wrapper { display: flex; justify-content: space-between; align-items: center; width: 100%; max-width: 1200px; }
+        h1 { font-family: 'Syne', sans-serif; font-size: 4.5rem; line-height: 1; margin-bottom: 20px; }
+        .gradient-text { background: linear-gradient(90deg, #00d2ff, #fff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .tags { display: flex; gap: 20px; font-size: 0.8rem; color: #666; letter-spacing: 1px; margin-top: 20px; text-transform: uppercase; }
+        .right-hero-content { text-align: right; max-width: 300px; display: flex; flex-direction: column; align-items: flex-end; gap: 20px; }
+        .description { color: #aaa; font-size: 0.95rem; line-height: 1.5; }
+        
+        .btn-group { display: flex; gap: 15px; }
+        .btn-link { padding: 12px 24px; border-radius: 30px; font-weight: 600; cursor: pointer; transition: 0.3s; text-decoration: none; display: inline-block; font-size: 0.9rem; }
+        .btn-outline { border: 1px solid rgba(255,255,255,0.2); background: transparent; color: white; }
+        .btn-filled { border: none; background: #00d2ff; color: black; }
+        .btn-outline:hover { border-color: white; background: rgba(255,255,255,0.05); }
+        .btn-filled:hover { background: #66e0ff; transform: scale(1.05); }
+
+        .about-wrapper { display: flex; align-items: flex-start; justify-content: center; gap: 60px; width: 100%; max-width: 1000px; backdrop-filter: blur(5px); padding: 40px; border-radius: 20px; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.05); }
+        .profile-img { width: 300px; height: 300px; border-radius: 20px; object-fit: cover; border: 2px solid rgba(255,255,255,0.1); }
+        .about-content { flex: 1; text-align: left; }
+        .about-content h2 { font-family: 'Syne', sans-serif; font-size: 3rem; margin: 0 0 10px 0; color: white; }
+        .about-content p { color: #ccc; line-height: 1.6; margin-bottom: 15px; font-size: 0.95rem; }
+
+        /* --- SKILLS GRID --- */
+        .skills-wrapper { width: 100%; max-width: 1100px; padding: 20px 0; }
+        .skills-header h2 { font-family: 'Syne', sans-serif; font-size: 3rem; margin-bottom: 10px; margin-top: 0; }
+        .skills-header p { color: #888; max-width: 600px; margin-bottom: 40px; }
+        .skills-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; }
+        .category-title { font-size: 1.4rem; margin-bottom: 5px; color: white; font-weight: 600; }
+        .category-desc { font-size: 0.9rem; color: #666; margin-bottom: 25px; }
+        .tools-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        
+        .spotlight-card { position: relative; background: rgba(20, 20, 20, 0.6); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 15px; overflow: hidden; display: flex; align-items: center; gap: 15px; transition: border-color 0.3s; }
+        .spotlight-card:hover { border-color: rgba(255,255,255,0.3); }
+        .spotlight-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: radial-gradient(800px circle at var(--mouse-x) var(--mouse-y), rgba(255,255,255,0.06), transparent 40%); opacity: 0; transition: opacity 0.5s; pointer-events: none; }
+        .spotlight-card:hover::before { opacity: 1; }
+        .card-content { position: relative; z-index: 2; display: flex; align-items: center; gap: 15px; width: 100%; }
+        .icon-box { width: 40px; height: 40px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; }
+        .tool-info h4 { margin: 0; font-size: 0.95rem; color: #eee; }
+        .tool-info p { margin: 2px 0 0 0; font-size: 0.75rem; color: #666; }
+        
+        .bg-blue { background: rgba(30, 64, 175, 0.2); color: #60a5fa; }
+        .bg-cyan { background: rgba(22, 78, 99, 0.2); color: #22d3ee; }
+        .bg-pink { background: rgba(131, 24, 67, 0.2); color: #f472b6; }
+        .bg-orange { background: rgba(124, 45, 18, 0.2); color: #fb923c; }
+        .bg-green { background: rgba(20, 83, 45, 0.2); color: #4ade80; }
+        .bg-yellow { background: rgba(113, 63, 18, 0.2); color: #eab308; }
+        .bg-purple { background: rgba(88, 28, 135, 0.2); color: #a78bfa; }
+        .bg-indigo { background: rgba(49, 46, 129, 0.2); color: #818cf8; }
+        .bg-gray { background: rgba(31, 41, 55, 0.5); color: white; }
+
+        /* --- WORK SECTION (Sticky) --- */
+        .work-container { display: flex; justify-content: space-between; align-items: flex-start; gap: 50px; width: 100%; max-width: 1200px; margin-top: 40px; }
+        .projects-scroll { width: 50%; display: flex; flex-direction: column; gap: 100px; }
+        .project-item { width: 100%; opacity: 0.3; transform: scale(0.95); transition: all 0.5s ease; cursor: pointer; border-radius: 15px; overflow: hidden; border: 1px solid rgba(255,255,255,0.1); }
+        .project-item.active { opacity: 1; transform: scale(1); border-color: #00d2ff; box-shadow: 0 0 30px rgba(0, 210, 255, 0.1); }
+        .project-image { width: 100%; height: auto; display: block; transition: transform 0.5s; }
+        .project-item:hover .project-image { transform: scale(1.03); }
+        .project-details { width: 45%; position: sticky; top: 150px; padding: 30px; background: rgba(20,20,20,0.8); border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(10px); border-radius: 20px; transition: opacity 0.3s ease; }
+        
+        .fade-out { opacity: 0; transform: translateY(10px); }
+        .fade-in { opacity: 1; transform: translateY(0); }
+        .project-title { font-family: 'Syne', sans-serif; font-size: 2.5rem; margin: 0 0 20px 0; color: white; }
+        .project-description { color: #ccc; line-height: 1.6; font-size: 1rem; margin-bottom: 25px; }
+        .project-features { padding-left: 20px; color: #aaa; margin-bottom: 30px; }
+        .project-features li { margin-bottom: 10px; }
+        .tech-stack { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 30px; }
+        .tech-tag { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 5px 12px; border-radius: 20px; font-size: 0.8rem; color: #00d2ff; }
+        .project-link { display: inline-block; color: black; background: white; padding: 12px 24px; border-radius: 30px; text-decoration: none; font-weight: 600; transition: 0.3s; }
+        .project-link:hover { background: #00d2ff; transform: translateY(-2px); }
+
+        /* --- CONTACT SECTION (Centered) --- */
+        .contact-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            max-width: 1100px;
+        }
+
+        .contact-form-box {
+            width: 60%;
+            max-width: 600px;
+            background: rgba(20, 20, 20, 0.6);
+            border: 1px solid rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            padding: 50px;
+            border-radius: 20px;
+            text-align: center;
+        }
+
+        .contact-form-box h2 {
+            font-family: 'Syne', sans-serif;
+            font-size: 2.5rem;
+            margin-bottom: 30px;
+            margin-top: 0;
+            color: white;
+        }
+
+        .form-group { margin-bottom: 20px; text-align: left; }
+        
+        input, textarea {
+            width: 100%;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 15px;
+            color: white;
+            border-radius: 8px;
+            font-family: 'Inter', sans-serif;
+            box-sizing: border-box;
+            transition: 0.3s;
+        }
+
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: #00d2ff;
+            background: rgba(0,0,0,0.5);
+        }
+
+        /* --- FOOTER STYLES --- */
+        footer {
+            width: 100%;
+            background: #0a0a0a;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            padding: 60px 5% 30px 5%;
+            box-sizing: border-box;
+            position: relative;
+            z-index: 20;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 40px;
+            max-width: 1200px;
+            margin: 0 auto;
+            margin-bottom: 50px;
+        }
+
+        .footer-col h3 {
+            font-family: 'Syne', sans-serif;
+            font-size: 1.2rem;
+            color: white;
+            margin-top: 0;
+            margin-bottom: 20px;
+        }
+
+        .footer-col p {
+            color: #888;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            margin: 0;
+        }
+
+        .footer-links {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .footer-links li { margin-bottom: 12px; }
+
+        .footer-links a {
+            color: #888;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: 0.3s;
+        }
+
+        .footer-links a:hover { color: #00d2ff; padding-left: 5px; }
+
+        .social-icons {
+            display: flex;
+            gap: 15px;
+        }
+
+        .social-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.05);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-decoration: none;
+            transition: 0.3s;
+            font-size: 1.2rem;
+        }
+
+        .social-btn:hover { background: #00d2ff; color: black; transform: translateY(-3px); }
+
+        .copyright {
+            text-align: center;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            padding-top: 30px;
+            color: #555;
+            font-size: 0.85rem;
+        }
+
+        @media (max-width: 768px) {
+            .hero-content-wrapper { flex-direction: column; text-align: center; }
+            .about-wrapper { flex-direction: column; }
+            .skills-grid { grid-template-columns: 1fr; }
+            .work-container { flex-direction: column-reverse; }
+            .projects-scroll { width: 100%; gap: 40px; }
+            .project-details { width: 100%; position: relative; top: 0; margin-bottom: 30px; }
+            .nav-links { display: none; }
+            
+            /* Contact Mobile */
+            .contact-form-box { width: 100%; }
+            
+            /* Footer Mobile */
+            .footer-content { grid-template-columns: 1fr; gap: 30px; text-align: center; }
+            .social-icons { justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="canvas-container"></div>
+
+    <header>
+        <a href="#" class="logo-text">Shalini Singh</a>
+        <div class="nav-links">
+            <a href="#hero">Home</a>
+            <a href="#about">About</a>
+            <a href="#skills">Skills</a>
+            <a href="#work">Work</a>
+            <a href="#contact">Contact</a>
+        </div>
+        <a href="#contact" class="talk-btn">Let's Talk!</a>
+    </header>
+
+    <section id="hero">
+        <div class="hero-content-wrapper">
+            <div class="hero-text">
+                <h1>Shalini Singh<br><span class="gradient-text">Creative Developer</span></h1>
+                <div class="tags">
+                    <span>Web Design</span> <span>Development</span> <span>UI/UX</span>
+                </div>
+            </div>
+            <div class="right-hero-content">
+                <p class="description">Building immersive web experiences and crafting digital stories that stand out.</p>
+                <div class="btn-group">
+                    <a href="#contact" class="btn-outline btn-link">Contact Me</a>
+                    <a href="#about" class="btn-filled btn-link">Get Started &rarr;</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="about">
+        <div class="about-wrapper">
+            <img src="profile-photo.jpg" alt="Shalini Singh" class="profile-img">
+            
+            <div class="about-content">
+                <h2>About Me</h2>
+                <p>Hello! I'm Shalini Singh, currently pursuing my B.Tech in Biotechnology. I'm deeply fascinated by how science and technology converge to create solutions that shape a better and more sustainable world.</p>
+                <p>My journey in biotechnology has not only strengthened my understanding of life sciences but has also nurtured my curiosity for innovation and problem-solving. I'm driven by the idea that meaningful progress happens when knowledge meets creativity — and that every experiment, success, or setback is a step toward discovery.</p>
+                <p>Beyond academics, I enjoy exploring the latest breakthroughs in biotech, learning new coding languages, and engaging in open-source projects that challenge my perspective and expand my skill set. I believe that growth is a lifelong pursuit — one built on curiosity, courage, and a commitment to continuous learning.</p>
+                
+                <div class="btn-group" style="justify-content: flex-start; margin-top: 20px;">
+                    <a href="#skills" class="btn-filled btn-link">View Skills</a>
+                    <a href="#work" class="btn-outline btn-link">My Work</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="skills">
+        <div class="skills-wrapper">
+            <div class="skills-header">
+                <h2>Tools & Skills</h2>
+                <p>My expertise combines technical proficiency with professional skills to deliver comprehensive solutions.</p>
+            </div>
+
+            <div class="skills-grid">
+                
+                <div>
+                    <div class="category-title">Core Technologies</div>
+                    <div class="category-desc">Primary technologies for modern web apps</div>
+                    <div class="tools-grid">
+                        <div class="spotlight-card"><div class="card-content"><div class="icon-box bg-gray"><i class="ri-global-line"></i></div><div class="tool-info"><h4>Next.js</h4></div></div></div>
+                        <div class="spotlight-card"><div class="card-content"><div class="icon-box bg-blue"><i class="ri-reactjs-line"></i></div><div class="tool-info"><h4>React.js</h4></div></div></div>
+                        <div class="spotlight-card"><div class="card-content"><div class="icon-box bg-blue"><i class="ri-code-s-slash-line"></i></div><div class="tool-info"><h4>TypeScript</h4></div></div></div>
+                        <div class="spotlight-card"><div class="card-content"><div class="icon-box bg-cyan"><i class="ri-layout-masonry-line"></i></div><div class="tool-info"><h4>Tailwind CSS</h4></div></div></div>
+                        <div class="spotlight-card"><div class="card-content"><div class="icon-box bg-pink"><i class="ri-flashlight-line"></i></div><div class="tool-info"><h4>GraphQL</h4></div></div></div>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="category-title">Backend & Cloud</div>
+                    <div class="category-desc">Server-side development and services</div>
+                    <div class="tools-grid">
+                        <div class="spotlight-card"><div class="card-content"><div class="icon-box bg-orange"><i class="ri-database-2-line"></i></div><div class="tool-info"><h4>Convex</h4></div></div></div>
+                        <div class="spotlight-card"><div class="card-content"><div class="icon-box bg-yellow"><i class="ri-fire-line"></i></div><div class="tool-info"><h4>Firebase</h4></div></div></div>
+                        <div class="spotlight-card"><div class="card-content"><div class="icon-box bg-green"><i class="ri-leaf-line"></i></div><div class="tool-info"><h4>MongoDB</h4></div></div></div>
+                        <div class="spotlight-card"><div class="card-content"><div class="icon-box bg-indigo"><i class="ri-stack-line"></i></div><div class="tool-info"><h4>Prisma</h4></div></div></div>
+                        <div class="spotlight-card"><div class="card-content"><div class="icon-box bg-orange"><i class="ri-cloud-line"></i></div><div class="tool-info"><h4>AWS</h4></div></div></div>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="category-title">Development Tools</div>
+                    <div class="category-desc">Workflow and deployment</div>
+                    <div class="tools-grid">
+                        <div class="spotlight-card"><div class="card-content"><div class="icon-box bg-blue"><i class="ri-box-3-line"></i></div><div class="tool-info"><h4>Docker</h4></div></div></div>
+                        <div class="spotlight-card"><div class="card-content"><div class="icon-box bg-gray"><i class="ri-github-fill"></i></div><div class="tool-info"><h4>GitHub</h4></div></div></div>
+                        <div class="spotlight-card"><div class="card-content"><div class="icon-box bg-purple"><i class="ri-links-line"></i></div><div class="tool-info"><h4>REST APIs</h4></div></div></div>
+                        <div class="spotlight-card"><div class="card-content"><div class="icon-box bg-pink"><i class="ri-pen-nib-line"></i></div><div class="tool-info"><h4>Figma</h4></div></div></div>
+                        <div class="spotlight-card"><div class="card-content"><div class="icon-box bg-orange"><i class="ri-send-plane-line"></i></div><div class="tool-info"><h4>Postman</h4></div></div></div>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="category-title">Bioinformatics & Data</div>
+                    <div class="category-desc">Scientific Analysis & Tools</div>
+                    <div class="tools-grid">
+                        <div class="spotlight-card"><div class="card-content"><div class="icon-box bg-green"><i class="ri-search-eye-line"></i></div><div class="tool-info"><h4>BLAST / Clustal</h4></div></div></div>
+                        <div class="spotlight-card"><div class="card-content"><div class="icon-box bg-blue"><i class="ri-database-2-line"></i></div><div class="tool-info"><h4>NCBI Tools</h4></div></div></div>
+                        <div class="spotlight-card"><div class="card-content"><div class="icon-box bg-orange"><i class="ri-function-line"></i></div><div class="tool-info"><h4>MATLAB</h4></div></div></div>
+                        <div class="spotlight-card"><div class="card-content"><div class="icon-box bg-green"><i class="ri-file-excel-2-line"></i></div><div class="tool-info"><h4>Excel Toolkit</h4></div></div></div>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="category-title">Professional Skills</div>
+                    <div class="category-desc">Competencies that enhance work</div>
+                    <div class="tools-grid">
+                        <div class="spotlight-card">
+                            <div class="card-content"><div class="icon-box bg-indigo"><i class="ri-cpu-line"></i></div>
+                            <div class="tool-info"><h4>Problem Solving</h4><p>Breaking down complex issues</p></div></div>
+                        </div>
+                        <div class="spotlight-card">
+                            <div class="card-content"><div class="icon-box bg-blue"><i class="ri-team-line"></i></div>
+                            <div class="tool-info"><h4>Collaboration</h4><p>Effective team communication</p></div></div>
+                        </div>
+                        <div class="spotlight-card">
+                            <div class="card-content"><div class="icon-box bg-green"><i class="ri-time-line"></i></div>
+                            <div class="tool-info"><h4>Time Management</h4><p>Efficient project planning</p></div></div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <section id="work">
+        <div style="width:100%; display:flex; flex-direction:column; align-items:center;">
+            <h2 style="font-family: 'Syne', sans-serif; font-size: 3rem; margin-bottom: 20px;">Selected Work</h2>
+            
+            <div class="work-container">
+                <div class="projects-scroll">
+                    <div class="project-item" data-project="0">
+                        <img src="project1.jpg" alt="MedManage" class="project-image">
+                    </div>
+                    <div class="project-item" data-project="1">
+                        <img src="project2.jpg" alt="SecureVault" class="project-image">
+                    </div>
+                    <div class="project-item" data-project="2">
+                        <img src="project3.jpg" alt="FileCraft" class="project-image">
+                    </div>
+                    <div class="project-item" data-project="3">
+                        <img src="project4.jpg" alt="Sampoorna" class="project-image">
+                    </div>
+                </div>
+
+                <div class="project-details" id="projectDetails">
+                    <h2 class="project-title" id="projectTitle">Loading...</h2>
+                    <p class="project-description" id="projectDescription">Select a project to view details.</p>
+                    <ul class="project-features" id="projectFeatures"></ul>
+                    <div class="tech-stack" id="techStack"></div>
+                    <a href="#" class="project-link" id="projectLink" target="_blank">View Project &rarr;</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="contact">
+        <div class="contact-container">
+            <div class="contact-form-box">
+                <h2>Contact Me</h2>
+                <form>
+                    <div class="form-group">
+                        <input type="text" placeholder="Your Name" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="email" placeholder="Your Email" required>
+                    </div>
+                    <div class="form-group">
+                        <textarea rows="5" placeholder="Your Message" required></textarea>
+                    </div>
+                    <button type="submit" class="btn-filled">Send Message</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-col">
+                <h3>About Me</h3>
+                <p>I see growth as a quiet evolution — built on curiosity, courage, and the will to create meaning. With every step, I aim to learn deeply and leave a little more light behind.</p>
+            </div>
+            <div class="footer-col">
+                <h3>Quick Links</h3>
+                <ul class="footer-links">
+                    <li><a href="#hero">Home</a></li>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#skills">Skills</a></li>
+                    <li><a href="#work">Work</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h3>Skills</h3>
+                <ul class="footer-links">
+                    <li><a href="#">Full Stack Development</a></li>
+                    <li><a href="#">AI & Machine Learning</a></li>
+                    <li><a href="#">UI/UX Design</a></li>
+                    <li><a href="#">Project Management</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h3>Connect</h3>
+                <div class="social-icons">
+                    <a href="https://www.linkedin.com/in/shalini-singh-42a123298" target="_blank" class="social-btn">
+                        <i class="ri-linkedin-fill"></i>
+                    </a>
+                    <a href="https://github.com/singhshalini7545-dot" target="_blank" class="social-btn">
+                        <i class="ri-github-fill"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="copyright">
+            <p>&copy; 2025 Shalini Singh. Made with love. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // --- WORK SECTION LOGIC ---
+        const projects = [
+            {
+                title: "MedManage",
+                description: "MedManage is a comprehensive pharmacy management platform designed to modernize medical retail operations. It features secure inventory control, real-time sales tracking, and automated invoice generation.",
+                features: ["🔐 Role-based access control.", "📦 Real-time inventory.", "📄 Automated PDF Invoicing."],
+                tech: ["Node.js","Express", "Tailwind", "MongoDB"],
+                link: "https://med-manage-online.vercel.app/login.html"
+            },
+            {
+                title: "SecureVault",
+                description: "A client-side password manager with AES encryption that runs entirely in your browser. Store, organize, and generate strong passwords. All data stays local in localStorage.",
+                features: ["🔐 AES Encryption.", "🏷️ Smart Filtering.", "🔑 Password Generator."],
+                tech: ["JS (ES6+)", "Tailwind", "CryptoJS"],
+                link: "https://secure-vault-eta-flame.vercel.app"
+            },
+            {
+                title: "FileCraft",
+                description: "A browser-based file conversion tool that handles document, image, and media transformations entirely client-side using WebAssembly.",
+                features: ["🖼️ Image Processing.", "🎬 Media Conversion.", "📄 PDF Manipulation."],
+                tech: ["JS", "FFmpeg.wasm", "PDF-lib"],
+                link: "https://filecraft-mu.vercel.app"
+            },
+            {
+                title: "Sampoorna",
+                description: "A next-generation humanitarian platform connecting donors, NGOs, and communities with verification, transparency, and AI-powered allocation.",
+                features: ["🔐 Verified Donations.", "📊 Impact Analytics.", "🚨 Emergency Response."],
+                tech: ["Node.js", "Express", "MongoDB", "JWT"],
+                link: "https://global-aid-network-frontend.vercel.app"
+            }
+        ];
+
+        const projectItems = document.querySelectorAll('.project-item');
+        const projectDetails = document.getElementById('projectDetails');
+        const projectTitle = document.getElementById('projectTitle');
+        const projectDescription = document.getElementById('projectDescription');
+        const projectFeatures = document.getElementById('projectFeatures');
+        const techStack = document.getElementById('techStack');
+        const projectLink = document.getElementById('projectLink');
+
+        document.querySelectorAll('.project-image').forEach((img, index) => {
+            img.addEventListener('click', () => window.open(projects[index].link, '_blank'));
+        });
+
+        function updateProjectDetails(index) {
+            const project = projects[index];
+            projectDetails.classList.add('fade-out');
+            projectDetails.classList.remove('fade-in');
+            
+            setTimeout(() => {
+                projectTitle.textContent = project.title;
+                projectDescription.textContent = project.description;
+                projectFeatures.innerHTML = '';
+                project.features.forEach(feature => {
+                    const li = document.createElement('li');
+                    li.textContent = feature;
+                    projectFeatures.appendChild(li);
+                });
+                techStack.innerHTML = '';
+                project.tech.forEach(tech => {
+                    const tag = document.createElement('span');
+                    tag.className = 'tech-tag';
+                    tag.textContent = tech;
+                    techStack.appendChild(tag);
+                });
+                projectLink.href = project.link;
+                projectDetails.classList.remove('fade-out');
+                projectDetails.classList.add('fade-in');
+            }, 300);
+        }
+
+        const workObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const projectIndex = parseInt(entry.target.getAttribute('data-project'));
+                    projectItems.forEach(item => item.classList.remove('active'));
+                    entry.target.classList.add('active');
+                    updateProjectDetails(projectIndex);
+                }
+            });
+        }, { root: null, rootMargin: '-40% 0px -40% 0px', threshold: 0 });
+
+        projectItems.forEach(item => workObserver.observe(item));
+
+        if (projectItems.length > 0) {
+            projectItems[0].classList.add('active');
+            updateProjectDetails(0);
+        }
+
+        // --- SKILLS HOVER LOGIC ---
+        document.querySelectorAll('.spotlight-card').forEach(card => {
+            card.addEventListener('mousemove', (e) => {
+                const rect = card.getBoundingClientRect();
+                card.style.setProperty('--mouse-x', `${e.clientX - rect.left}px`);
+                card.style.setProperty('--mouse-y', `${e.clientY - rect.top}px`);
+            });
+        });
+    </script>
+
+    <script type="module">
+        import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.158.0/build/three.module.js';
+
+        const container = document.getElementById('canvas-container');
+        const scene = new THREE.Scene();
+        scene.fog = new THREE.FogExp2(0x050505, 0.0012); 
+
+        const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 1000);
+        camera.position.set(0, 40, 70); 
+        camera.lookAt(0, 0, 0);
+
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(window.devicePixelRatio);
+        container.appendChild(renderer.domElement);
+
+        const group = new THREE.Group();
+        scene.add(group);
+
+        const gridSize = 20; 
+        const separation = 2.4; 
+        const cubes = []; 
+        const geometry = new THREE.BoxGeometry(2.0, 1.2, 2.0);
+        const offset = (gridSize * separation) / 2 - (separation / 2);
+
+        for (let x = 0; x < gridSize; x++) {
+            for (let z = 0; z < gridSize; z++) {
+                const edgesGeo = new THREE.EdgesGeometry(geometry);
+                const ratio = x / gridSize;
+                const color = new THREE.Color().setHSL(0.55 + (ratio * 0.3), 1, 0.5); 
+                const material = new THREE.LineBasicMaterial({ color: color });
+                const mesh = new THREE.LineSegments(edgesGeo, material);
+                const fillMat = new THREE.MeshBasicMaterial({ color: 0x000000 });
+                const fillMesh = new THREE.Mesh(geometry, fillMat);
+                const cubeGroup = new THREE.Group();
+                cubeGroup.add(fillMesh);
+                cubeGroup.add(mesh);
+                cubeGroup.position.x = x * separation - offset;
+                cubeGroup.position.z = z * separation - offset;
+                cubeGroup.position.y = 0;
+                cubeGroup.userData = { targetY: 0 };
+                group.add(cubeGroup);
+                cubes.push(cubeGroup);
+            }
+        }
+        group.rotation.y = Math.PI / 4;
+        group.position.x = 12; group.position.z = -10; 
+
+        const raycaster = new THREE.Raycaster();
+        const mouse = new THREE.Vector2();
+        const plane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
+        let isHovering = false;
+
+        function onMouseMove(event) {
+            mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+            mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+            isHovering = true;
+        }
+        function onMouseLeave() { isHovering = false; }
+
+        window.addEventListener('mousemove', onMouseMove);
+        document.body.addEventListener('mouseleave', onMouseLeave);
+
+        function animate() {
+            requestAnimationFrame(animate);
+            raycaster.setFromCamera(mouse, camera);
+            const target = new THREE.Vector3(); 
+            raycaster.ray.intersectPlane(plane, target);
+            cubes.forEach(cube => {
+                let dist = 100; 
+                if (isHovering && target) {
+                    const worldPos = new THREE.Vector3();
+                    cube.getWorldPosition(worldPos);
+                    dist = Math.sqrt(Math.pow(worldPos.x - target.x, 2) + Math.pow(worldPos.z - target.z, 2));
+                }
+                const maxDist = 12; const maxHeight = 6;
+                if (dist < maxDist) {
+                    const height = maxHeight * (1 - (dist / maxDist));
+                    cube.userData.targetY = height;
+                } else { cube.userData.targetY = 0; }
+                cube.position.y += (cube.userData.targetY - cube.position.y) * 0.1;
+                const scale = 1 + (cube.position.y * 0.1);
+                cube.scale.set(1, scale, 1);
+            });
+            renderer.render(scene, camera);
+        }
+        animate();
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+    </script>
+</body>
+</html>
